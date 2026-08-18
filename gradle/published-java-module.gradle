@@ -130,9 +130,13 @@ gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
 	}
 
 	if ( wasPublishingRequested ) {
+		def publishingToSonatype = graph.allTasks.any { task ->
+			task instanceof PublishToMavenRepository &&
+					task.repository?.name?.toLowerCase()?.contains( 'sonatype' )
+		}
 		def ossrhUser = System.getenv().get( "ORG_GRADLE_PROJECT_sonatypeUsername" )
 		def ossrhPass = System.getenv().get( "ORG_GRADLE_PROJECT_sonatypePassword" )
-		if ( ossrhUser == null || ossrhPass == null ) {
+		if ( publishingToSonatype && ( ossrhUser == null || ossrhPass == null ) ) {
 			throw new RuntimeException( "Cannot perform publishing to OSSRH without credentials." )
 		}
 		logger.lifecycle "Publishing {} : {} : {}", project.group, project.name, project.version
