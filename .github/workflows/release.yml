@@ -167,7 +167,7 @@ jobs:
             echo "MAVEN_CENTRAL_GPG_PRIVATE_KEY is required for Maven Central"
             exit 1
           fi
-          ./gradlew --no-daemon --no-build-cache publishToSonatype closeAndReleaseSonatypeStagingRepositories \
+          ./gradlew --no-daemon --no-build-cache publishToSonatype closeAndReleaseSonatypeStagingRepository \
             -PreleaseVersion="${RELEASE_VERSION}" \
             -PreleaseGroup="${RELEASE_GROUP}" \
             -x test
