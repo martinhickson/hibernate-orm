@@ -76,6 +76,15 @@ publishing {
     }
 }
 
+def platformSigningKey = System.getenv( 'SIGNING_GPG_PRIVATE_KEY' ) ?: System.getenv( 'MAVEN_CENTRAL_GPG_PRIVATE_KEY' )
+def platformSigningPassphrase = System.getenv( 'SIGNING_GPG_PASSPHRASE' ) ?: System.getenv( 'MAVEN_CENTRAL_GPG_PASSPHRASE' ) ?: ''
+if ( platformSigningKey ) {
+    signing {
+        useInMemoryPgpKeys( platformSigningKey, platformSigningPassphrase )
+        sign publishing.publications.publishedArtifacts
+    }
+}
+
 project( ":release" ).getTasks().named( "publishReleaseArtifacts" ).configure {
     dependsOn tasks.release
 }
