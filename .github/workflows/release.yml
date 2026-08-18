@@ -154,20 +154,20 @@ jobs:
       - name: Publish to Maven Central
         if: ${{ inputs.publish_central }}
         env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-          SIGNING_GPG_PRIVATE_KEY: ${{ secrets.SIGNING_GPG_PRIVATE_KEY }}
-          SIGNING_GPG_PASSPHRASE: ${{ secrets.SIGNING_GPG_PASSPHRASE }}
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          SIGNING_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PRIVATE_KEY }}
+          SIGNING_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_PASSPHRASE }}
         run: |
           if [ -z "${ORG_GRADLE_PROJECT_sonatypeUsername}" ] || [ -z "${ORG_GRADLE_PROJECT_sonatypePassword}" ]; then
-            echo "SONATYPE_USERNAME / SONATYPE_PASSWORD secrets are required for Maven Central"
+            echo "MAVEN_CENTRAL_USERNAME / MAVEN_CENTRAL_PASSWORD secrets are required for Maven Central"
             exit 1
           fi
-          if [ -z "${SIGNING_GPG_PRIVATE_KEY}" ] || [ -z "${SIGNING_GPG_PASSPHRASE}" ]; then
-            echo "SIGNING_GPG_PRIVATE_KEY / SIGNING_GPG_PASSPHRASE secrets are required for Maven Central"
+          if [ -z "${SIGNING_GPG_PRIVATE_KEY}" ]; then
+            echo "MAVEN_CENTRAL_GPG_PRIVATE_KEY is required for Maven Central"
             exit 1
           fi
-          ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepository \
+          ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepositories \
             -PreleaseVersion="${RELEASE_VERSION}" \
             -PreleaseGroup="${RELEASE_GROUP}" \
             -x test
