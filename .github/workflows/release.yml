@@ -127,7 +127,7 @@ jobs:
 
       - name: Build published artifacts
         run: |
-          ./gradlew --no-daemon assemble \
+          ./gradlew --no-daemon --no-build-cache assemble \
             -PreleaseVersion="${RELEASE_VERSION}" \
             -PreleaseGroup="${RELEASE_GROUP}" \
             -x test
@@ -135,7 +135,7 @@ jobs:
       - name: Run tests
         if: ${{ inputs.run_tests }}
         run: |
-          ./gradlew --no-daemon test \
+          ./gradlew --no-daemon --no-build-cache test \
             -PreleaseVersion="${RELEASE_VERSION}" \
             -PreleaseGroup="${RELEASE_GROUP}"
 
@@ -146,7 +146,7 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_PACKAGES_URL: https://maven.pkg.github.com/${{ github.repository }}
         run: |
-          ./gradlew --no-daemon publishAllPublicationsToGitHubPackagesRepository \
+          ./gradlew --no-daemon --no-build-cache publishAllPublicationsToGitHubPackagesRepository \
             -PreleaseVersion="${RELEASE_VERSION}" \
             -PreleaseGroup="${RELEASE_GROUP}" \
             -x test
@@ -167,7 +167,7 @@ jobs:
             echo "MAVEN_CENTRAL_GPG_PRIVATE_KEY is required for Maven Central"
             exit 1
           fi
-          ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepositories \
+          ./gradlew --no-daemon --no-build-cache publishToSonatype closeAndReleaseSonatypeStagingRepositories \
             -PreleaseVersion="${RELEASE_VERSION}" \
             -PreleaseGroup="${RELEASE_GROUP}" \
             -x test
