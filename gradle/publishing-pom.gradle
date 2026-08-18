@@ -13,9 +13,26 @@ tasks.withType(GenerateModuleMetadata) {
 	enabled = false
 }
 
+def releaseGroup = project.findProperty( 'releaseGroup' ) ?: System.getenv( 'RELEASE_GROUP' )
+
 publishing {
+	repositories {
+		if ( System.getenv( 'GITHUB_PACKAGES_URL' ) ) {
+			maven {
+				name = 'GitHubPackages'
+				url = uri( System.getenv( 'GITHUB_PACKAGES_URL' ) )
+				credentials {
+					username = System.getenv( 'GITHUB_ACTOR' )
+					password = System.getenv( 'GITHUB_TOKEN' )
+				}
+			}
+		}
+	}
 	publications {
 		publishedArtifacts( MavenPublication ) {
+			if ( releaseGroup ) {
+				groupId = releaseGroup
+			}
 			pom {
 				name = 'Hibernate ORM - ' + project.name
 				description = project.description
@@ -57,6 +74,28 @@ publishing {
 
 			}
 
+			if ( releaseGroup ) {
+				pom.withXml {
+					def ownGroupIds = [ 'org.hibernate.orm', 'org.hibernate.orm.tooling' ] as Set
+					def root = asNode()
+					def groupIdNodes = root.get( 'groupId' )
+					if ( groupIdNodes && ownGroupIds.contains( groupIdNodes[0].text() ) ) {
+						groupIdNodes[0].setValue( releaseGroup.toString() )
+					}
+					root.dependencies.dependency.each { dep ->
+						def depGroup = dep.get( 'groupId' )
+						if ( depGroup && ownGroupIds.contains( depGroup[0].text() ) ) {
+							depGroup[0].setValue( releaseGroup.toString() )
+						}
+					}
+					root.dependencyManagement.dependencies.dependency.each { dep ->
+						def depGroup = dep.get( 'groupId' )
+						if ( depGroup && ownGroupIds.contains( depGroup[0].text() ) ) {
+							depGroup[0].setValue( releaseGroup.toString() )
+						}
+					}
+				}
+			}
 		}
 	}
 

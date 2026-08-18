@@ -43,7 +43,9 @@ publishing {
 			from components.java
 		}
 
-		// relocation for the published artifacts based on the old groupId
+		// relocation for the published artifacts based on the old groupId.
+		// Skip when publishing under a fork group (we do not own org.hibernate).
+		if ( !project.findProperty( 'releaseGroup' ) && !System.getenv( 'RELEASE_GROUP' ) ) {
 		relocationPom( MavenPublication ) {
 			pom {
 				name = project.name + ' - relocation'
@@ -97,6 +99,7 @@ publishing {
 				}
 			}
 		}
+		}
 	}
 }
 
@@ -145,6 +148,10 @@ static String resolveSigningKey() {
 	if ( key != null ) {
 		return key
 	}
+	key = System.getenv().get( "MAVEN_CENTRAL_GPG_PRIVATE_KEY" )
+	if ( key != null ) {
+		return key
+	}
 
 	var keyFile = System.getenv().get( "SIGNING_GPG_PRIVATE_KEY_PATH" )
 	if ( keyFile != null ) {
@@ -155,7 +162,12 @@ static String resolveSigningKey() {
 }
 
 static String resolveSigningPassphrase() {
-	return System.getenv().get( "SIGNING_GPG_PASSPHRASE" )
+	def passphrase = System.getenv().get( "SIGNING_GPG_PASSPHRASE" )
+	if ( passphrase != null ) {
+		return passphrase
+	}
+	passphrase = System.getenv().get( "MAVEN_CENTRAL_GPG_PASSPHRASE" )
+	return passphrase != null ? passphrase : ""
 }
 
 

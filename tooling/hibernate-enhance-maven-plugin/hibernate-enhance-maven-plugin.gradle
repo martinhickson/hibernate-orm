@@ -11,7 +11,7 @@ apply plugin: 'maven-publish'
 
 
 import org.apache.tools.ant.filters.ReplaceTokens
-group = 'org.hibernate.orm.tooling'
+group = project.findProperty( 'releaseGroup' ) ?: 'org.hibernate.orm.tooling'
 
 processResources {
     include "**/lifecycle-mapping-metadata.xml"

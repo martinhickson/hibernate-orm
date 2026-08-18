@@ -50,6 +50,24 @@ public interface FetchSettings {
 	String USE_SUBSELECT_FETCH = "hibernate.use_subselect_fetch";
 
 	/**
+	 * When enabled, HQL and Criteria queries join-fetch eager {@code @ManyToOne}
+	 * and {@code @OneToOne} associations in the same SQL statement (Hibernate 5
+	 * behavior).
+	 * <p>
+	 * When disabled, those associations are loaded with secondary {@code SELECT}s
+	 * unless the query uses {@code join fetch}, an entity graph, or
+	 * {@code org.hibernate.defaultProfile}.
+	 * <p>
+	 * Set this in {@code persistence.xml}:
+	 * <pre>{@code
+	 * <property name="hibernate.use_eager_to_one_join_fetch" value="true"/>
+	 * }</pre>
+	 *
+	 * @settingDefault {@code true} (Hibernate 5 query plan)
+	 */
+	String USE_EAGER_TO_ONE_JOIN_FETCH = "hibernate.use_eager_to_one_join_fetch";
+
+	/**
 	 * Specifies the {@link org.hibernate.loader.BatchFetchStyle} to use,
 	 * either the name of a {code BatchFetchStyle} instance, or an instance
 	 * of {@code BatchFetchStyle}.

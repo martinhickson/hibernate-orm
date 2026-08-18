@@ -149,6 +149,15 @@ public interface SessionFactoryOptions extends QueryEngineOptions {
 
 	boolean isSubselectFetchEnabled();
 
+	/**
+	 * Whether HQL/Criteria join-fetch eager to-one associations (Hibernate 5 plan).
+	 *
+	 * @see org.hibernate.cfg.AvailableSettings#USE_EAGER_TO_ONE_JOIN_FETCH
+	 */
+	default boolean isEagerToOneJoinFetchEnabled() {
+		return true;
+	}
+
 	NullPrecedence getDefaultNullPrecedence();
 
 	boolean isOrderUpdatesEnabled();

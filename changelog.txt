@@ -3,6 +3,16 @@ Hibernate 6 Changelog
 
 Note: Please refer to JIRA to learn more about each issue.
 
+Local patch on 6.6.7.Final (tutorial / WildFly 36.0.1)
+------------------------------------------------------------------------------------------------------------------------
+
+** Improvement
+    * Restore Hibernate 5 query join-fetch for eager @ManyToOne / @OneToOne.
+      Enabled by default via persistence.xml property
+      hibernate.use_eager_to_one_join_fetch (true = H5 join plan, false = H6
+      secondary SELECTs). Eager collections are unchanged.
+
+
 Changes in 6.6.7.Final (February 10, 2025)
 ------------------------------------------------------------------------------------------------------------------------
 

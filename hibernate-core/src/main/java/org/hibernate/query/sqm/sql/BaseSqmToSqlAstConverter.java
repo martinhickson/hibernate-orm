@@ -8328,7 +8328,12 @@ public abstract class BaseSqmToSqlAstConverter<T extends Statement> extends Base
 
 		final String alias;
 		FetchTiming fetchTiming = fetchable.getMappedFetchOptions().getTiming();
-		boolean joined = false;
+		// Hibernate 5 join-fetched eager to-ones in HQL/Criteria. Hibernate 6.0+
+		// left them as secondary SELECTs unless `join fetch`, an entity graph, or
+		// `org.hibernate.defaultProfile` was used. Restore the 5.x query plan so
+		// mapped JOIN + IMMEDIATE to-ones are fetched in the same SQL statement.
+		// Eager collections are left as secondary selects (cartesian-product risk).
+		boolean joined = isMappedEagerToOneJoin( fetchable, fetchTiming );
 
 		final NavigablePath fetchablePath;
 		final Integer maxDepth = getCreationContext().getMaximumFetchDepth();
@@ -8578,6 +8583,24 @@ public abstract class BaseSqmToSqlAstConverter<T extends Statement> extends Base
 			}
 		}
 		return fetches.build();
+	}
+
+	/**
+	 * Whether this fetchable is an eager to-one that Hibernate 5 would have
+	 * join-fetched when translating a query.
+	 * <p>
+	 * Controlled by {@link org.hibernate.cfg.AvailableSettings#USE_EAGER_TO_ONE_JOIN_FETCH}
+	 * ({@code hibernate.use_eager_to_one_join_fetch}), default {@code true}.
+	 * {@link org.hibernate.loader.ast.internal.LoaderSelectBuilder} already
+	 * initializes {@code joined} from {@link FetchStyle#JOIN} for by-id loads.
+	 */
+	private boolean isMappedEagerToOneJoin(Fetchable fetchable, FetchTiming fetchTiming) {
+		return fetchTiming == FetchTiming.IMMEDIATE
+				&& fetchable.getMappedFetchOptions().getStyle() == FetchStyle.JOIN
+				&& fetchable instanceof ToOneAttributeMapping
+				&& getCreationContext().getSessionFactory()
+						.getSessionFactoryOptions()
+						.isEagerToOneJoinFetchEnabled();
 	}
 
 	private boolean shouldExplicitFetch(Integer maxDepth, Fetchable fetchable) {
