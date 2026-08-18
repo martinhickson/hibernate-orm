@@ -22,5 +22,5 @@ buildscript {
 	}
 }
 
-group = project.findProperty( 'releaseGroup' ) ?: 'org.hibernate.orm'
+group = 'io.github.martinhickson'
 version = project.ormVersion.fullName

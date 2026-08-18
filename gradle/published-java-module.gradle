@@ -92,7 +92,7 @@ publishing {
 
 				distributionManagement {
 					relocation {
-						groupId = 'org.hibernate.orm'
+						groupId = 'io.github.martinhickson'
 						artifactId = project.name
 						version = project.version
 					}
