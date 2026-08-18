@@ -8589,15 +8589,18 @@ public abstract class BaseSqmToSqlAstConverter<T extends Statement> extends Base
 	 * Whether this fetchable is an eager to-one that Hibernate 5 would have
 	 * join-fetched when translating a query.
 	 * <p>
+	 * Controlled by {@link org.hibernate.cfg.AvailableSettings#USE_EAGER_TO_ONE_JOIN_FETCH}
+	 * ({@code hibernate.use_eager_to_one_join_fetch}), default {@code true}.
 	 * {@link org.hibernate.loader.ast.internal.LoaderSelectBuilder} already
 	 * initializes {@code joined} from {@link FetchStyle#JOIN} for by-id loads.
-	 * Query translation did not, which is why {@code from Entity} paid an N+1
-	 * secondary select per eager {@code @ManyToOne}/{@code @OneToOne}.
 	 */
-	private static boolean isMappedEagerToOneJoin(Fetchable fetchable, FetchTiming fetchTiming) {
+	private boolean isMappedEagerToOneJoin(Fetchable fetchable, FetchTiming fetchTiming) {
 		return fetchTiming == FetchTiming.IMMEDIATE
 				&& fetchable.getMappedFetchOptions().getStyle() == FetchStyle.JOIN
-				&& fetchable instanceof ToOneAttributeMapping;
+				&& fetchable instanceof ToOneAttributeMapping
+				&& getCreationContext().getSessionFactory()
+						.getSessionFactoryOptions()
+						.isEagerToOneJoinFetchEnabled();
 	}
 
 	private boolean shouldExplicitFetch(Integer maxDepth, Fetchable fetchable) {

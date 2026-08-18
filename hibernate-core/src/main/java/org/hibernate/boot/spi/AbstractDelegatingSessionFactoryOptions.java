@@ -195,6 +195,11 @@ public class AbstractDelegatingSessionFactoryOptions implements SessionFactoryOp
 	}
 
 	@Override
+	public boolean isEagerToOneJoinFetchEnabled() {
+		return delegate.isEagerToOneJoinFetchEnabled();
+	}
+
+	@Override
 	public NullPrecedence getDefaultNullPrecedence() {
 		return delegate.getDefaultNullPrecedence();
 	}

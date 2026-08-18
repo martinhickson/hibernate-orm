@@ -127,6 +127,7 @@ import static org.hibernate.cfg.AvailableSettings.USE_SCROLLABLE_RESULTSET;
 import static org.hibernate.cfg.AvailableSettings.USE_SECOND_LEVEL_CACHE;
 import static org.hibernate.cfg.AvailableSettings.USE_SQL_COMMENTS;
 import static org.hibernate.cfg.AvailableSettings.USE_STRUCTURED_CACHE;
+import static org.hibernate.cfg.AvailableSettings.USE_EAGER_TO_ONE_JOIN_FETCH;
 import static org.hibernate.cfg.AvailableSettings.USE_SUBSELECT_FETCH;
 import static org.hibernate.cfg.CacheSettings.QUERY_CACHE_LAYOUT;
 import static org.hibernate.cfg.PersistenceSettings.UNOWNED_ASSOCIATION_TRANSIENT_CHECK;
@@ -203,6 +204,7 @@ public class SessionFactoryOptionsBuilder implements SessionFactoryOptions {
 	private int defaultBatchFetchSize;
 	private Integer maximumFetchDepth;
 	private boolean subselectFetchEnabled;
+	private boolean eagerToOneJoinFetchEnabled;
 	private NullPrecedence defaultNullPrecedence;
 	private boolean orderUpdatesEnabled;
 	private boolean orderInsertsEnabled;
@@ -381,6 +383,7 @@ public class SessionFactoryOptionsBuilder implements SessionFactoryOptions {
 		this.delayBatchFetchLoaderCreations = configurationService.getSetting( DELAY_ENTITY_LOADER_CREATIONS, BOOLEAN, true );
 		this.defaultBatchFetchSize = getInt( DEFAULT_BATCH_FETCH_SIZE, configurationSettings, -1 );
 		this.subselectFetchEnabled = getBoolean( USE_SUBSELECT_FETCH, configurationSettings );
+		this.eagerToOneJoinFetchEnabled = getBoolean( USE_EAGER_TO_ONE_JOIN_FETCH, configurationSettings, true );
 		this.maximumFetchDepth = getInteger( MAX_FETCH_DEPTH, configurationSettings );
 
 		final Object defaultNullPrecedence = configurationSettings.get( DEFAULT_NULL_ORDERING );
@@ -1043,6 +1046,11 @@ public class SessionFactoryOptionsBuilder implements SessionFactoryOptions {
 	@Override
 	public boolean isSubselectFetchEnabled() {
 		return subselectFetchEnabled;
+	}
+
+	@Override
+	public boolean isEagerToOneJoinFetchEnabled() {
+		return eagerToOneJoinFetchEnabled;
 	}
 
 	@Override

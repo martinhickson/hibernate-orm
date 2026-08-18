@@ -319,7 +319,7 @@ public class NewFetchTest {
 			return s.createSelectionQuery("from H", H.class).getResultList();
 		});
 		assertTrue( isInitialized( hs1.get(0).g ) );
-		// Eager @ManyToOne is join-fetched in the query (Hibernate 5 plan).
+		// Default hibernate.use_eager_to_one_join_fetch=true (Hibernate 5 plan).
 		scope.getCollectingStatementInspector().assertExecutedCount(1);
 		scope.getCollectingStatementInspector().assertNumberOfJoins(0, 1);
 
