@@ -319,9 +319,9 @@ public class NewFetchTest {
 			return s.createSelectionQuery("from H", H.class).getResultList();
 		});
 		assertTrue( isInitialized( hs1.get(0).g ) );
-		scope.getCollectingStatementInspector().assertExecutedCount(2);
-		scope.getCollectingStatementInspector().assertNumberOfJoins(0, 0);
-		scope.getCollectingStatementInspector().assertNumberOfJoins(1, 0);
+		// Eager @ManyToOne is join-fetched in the query (Hibernate 5 plan).
+		scope.getCollectingStatementInspector().assertExecutedCount(1);
+		scope.getCollectingStatementInspector().assertNumberOfJoins(0, 1);
 
 		scope.getCollectingStatementInspector().clear();
 		List<H> hs2 = scope.fromSession( s -> {

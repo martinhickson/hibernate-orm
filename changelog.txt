@@ -3,6 +3,16 @@ Hibernate 6 Changelog
 
 Note: Please refer to JIRA to learn more about each issue.
 
+Local patch on 6.6.7.Final (tutorial / WildFly 36.0.1)
+------------------------------------------------------------------------------------------------------------------------
+
+** Improvement
+    * Restore Hibernate 5 query join-fetch for eager @ManyToOne / @OneToOne
+      (BaseSqmToSqlAstConverter now treats mapped JOIN+IMMEDIATE to-ones as
+      joined fetches, matching LoaderSelectBuilder / find() and avoiding N+1
+      secondary selects). Eager collections are unchanged.
+
+
 Changes in 6.6.7.Final (February 10, 2025)
 ------------------------------------------------------------------------------------------------------------------------
 
