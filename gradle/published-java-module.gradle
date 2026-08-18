@@ -43,7 +43,9 @@ publishing {
 			from components.java
 		}
 
-		// relocation for the published artifacts based on the old groupId
+		// relocation for the published artifacts based on the old groupId.
+		// Skip when publishing under a fork group (we do not own org.hibernate).
+		if ( !project.findProperty( 'releaseGroup' ) && !System.getenv( 'RELEASE_GROUP' ) ) {
 		relocationPom( MavenPublication ) {
 			pom {
 				name = project.name + ' - relocation'
@@ -96,6 +98,7 @@ publishing {
 					}
 				}
 			}
+		}
 		}
 	}
 }
